@@ -21,16 +21,16 @@ def highlighted_title(text):
     )
 
 highlighted_title("Received Parcel Condition Photo")
-parcel_photo = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"])
+parcel_photo = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"], key="parcel_photo")
 
 highlighted_title("AWB/Tracking Detail Photo")
-awb_photo = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"])
+awb_photo = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"], key="awb_photo")
 
 highlighted_title("Product Condition Photo 1")
-product_photo_1 = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"])
+product_photo_1 = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"], key="product_photo_1")
 
 highlighted_title("Product Condition Photo 2")
-product_photo_2 = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"])
+product_photo_2 = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"], key="product_photo_2")
 
 def save_temp_image(uploaded_file, name, max_dim=500):
     if uploaded_file:
