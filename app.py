@@ -16,8 +16,8 @@ reason = st.selectbox("Reason", ["Damage", "Wrong Item"])
 
 parcel_photo = st.file_uploader("Received Parcel Condition Photo", type=["jpg", "jpeg", "png"])
 awb_photo = st.file_uploader("AWB/Tracking Detail Photo", type=["jpg", "jpeg", "png"])
-product_photo_1 = st.file_uploader("Product Condition Photo 1", type=["jpg", "jpeg", "png"])
-product_photo_2 = st.file_uploader("Product Condition Photo 2", type=["jpg", "jpeg", "png"])
+product_photo_1 = st.file_uploader("Product Photo 1", type=["jpg", "jpeg", "png"])
+product_photo_2 = st.file_uploader("Product Photo 2", type=["jpg", "jpeg", "png"])
 
 def save_temp_image(uploaded_file, name, max_dim=500):
     if uploaded_file:
