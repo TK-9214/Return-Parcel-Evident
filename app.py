@@ -3,7 +3,7 @@ from fpdf import FPDF
 from PIL import Image, ImageOps
 import os
 
-st.title("Order Issue PDF Generator (Single Landscape Page, Auto-Rotate Photos, V5, 1 Remark)")
+st.title("Return Parcel Damage or wrong items)")
 
 # Inputs
 brand = st.text_input("Brand")
