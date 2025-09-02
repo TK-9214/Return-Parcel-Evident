@@ -3,7 +3,7 @@ from fpdf import FPDF
 from PIL import Image, ImageOps
 import os
 
-st.title("Return Parcel Damage or wrong items)")
+st.title("Order Issue PDF Generator (Single Landscape Page, Auto-Rotate Photos, Highlighted Titles)")
 
 # Inputs
 brand = st.text_input("Brand")
@@ -14,10 +14,23 @@ sku = st.text_input("SKU")
 reason = st.selectbox("Reason", ["Damage", "Wrong Item"])
 remark = st.text_area("Remark")
 
-parcel_photo = st.file_uploader("Received Parcel Condition Photo", type=["jpg", "jpeg", "png"])
-awb_photo = st.file_uploader("AWB/Tracking Detail Photo", type=["jpg", "jpeg", "png"])
-product_photo_1 = st.file_uploader("Product Condition Photo 1", type=["jpg", "jpeg", "png"])
-product_photo_2 = st.file_uploader("Product Condition Photo 2", type=["jpg", "jpeg", "png"])
+def highlighted_title(text):
+    st.markdown(
+        f'<div style="background-color:#ffff44; color:#222; font-weight:bold; padding:2px 8px; border-radius:3px; display:inline-block; margin-bottom:4px;">{text}</div>',
+        unsafe_allow_html=True
+    )
+
+highlighted_title("Received Parcel Condition Photo")
+parcel_photo = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"])
+
+highlighted_title("AWB/Tracking Detail Photo")
+awb_photo = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"])
+
+highlighted_title("Product Condition Photo 1")
+product_photo_1 = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"])
+
+highlighted_title("Product Condition Photo 2")
+product_photo_2 = st.file_uploader("Drag and drop file here", type=["jpg", "jpeg", "png"])
 
 def save_temp_image(uploaded_file, name, max_dim=500):
     if uploaded_file:
@@ -33,8 +46,12 @@ if st.button("Generate PDF"):
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
 
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, "Order Issue Report", ln=1, align="C")
+    # Highlighted Title
+    pdf.set_fill_color(255, 255, 68)
+    pdf.set_text_color(34, 34, 34)
+    pdf.set_font("Arial", "B", 20)
+    pdf.cell(0, 14, "Order Issue Report", ln=1, align="C", fill=True)
+    pdf.set_text_color(0, 0, 0)
     pdf.set_font("Arial", "", 10)
     pdf.cell(0, 6, f"Brand: {brand}   Platform: {platform}", ln=1)
     pdf.cell(0, 6, f"Order ID: {order_id}", ln=1)
@@ -68,10 +85,14 @@ if st.button("Generate PDF"):
             row = i // 2
             x = margin_x + col * col_spacing
             y = margin_y + row * row_spacing
+            # Highlight the image caption in PDF
             pdf.image(img_path, x=x, y=y, w=img_width, h=img_height)
             pdf.set_xy(x, y + img_height + 2)
-            pdf.set_font("Arial", "I", 8)
-            pdf.cell(img_width, 5, caption, align="C")
+            pdf.set_fill_color(255, 255, 68)
+            pdf.set_text_color(34, 34, 34)
+            pdf.set_font("Arial", "B", 10)
+            pdf.cell(img_width, 7, caption, align="C", fill=True)
+            pdf.set_text_color(0, 0, 0)
 
     # Export PDF file name according to order_id
     pdf_filename = f"{order_id if order_id else 'order_issue_report'}.pdf"
