@@ -1,10 +1,9 @@
 import streamlit as st
 from fpdf import FPDF
 from PIL import Image, ImageOps
-import io
 import os
 
-st.title("Order Issue PDF Generator (Single Landscape Page, Auto-Rotate Photos)")
+st.title("Order Issue PDF Generator (Full Landscape Page)")
 
 # Inputs
 brand = st.text_input("Brand")
@@ -19,36 +18,35 @@ awb_photo = st.file_uploader("AWB/Tracking Detail Photo", type=["jpg", "jpeg", "
 product_photo_1 = st.file_uploader("Product Condition Photo 1", type=["jpg", "jpeg", "png"])
 product_photo_2 = st.file_uploader("Product Condition Photo 2", type=["jpg", "jpeg", "png"])
 
-def save_temp_image(uploaded_file, name, max_dim=500):
+def save_temp_image(uploaded_file, name, max_dim=800):
     if uploaded_file:
         img = Image.open(uploaded_file)
         img = ImageOps.exif_transpose(img)
-        img.thumbnail((max_dim, max_dim))  # Resize for fitting
+        img.thumbnail((max_dim, max_dim))
         img_path = f"temp_{name}.png"
         img.save(img_path)
         return img_path
     return None
 
 if st.button("Generate PDF"):
+    # A4 landscape size: 297mm x 210mm
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
 
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, "Order Issue Report", ln=1, align="C")
-    pdf.set_font("Arial", "", 10)
-    pdf.cell(0, 6, f"Brand: {brand}   Platform: {platform}", ln=1)
-    pdf.cell(0, 6, f"Order ID: {order_id}", ln=1)
-    pdf.cell(0, 6, f"Tracking: {tracking}   SKU: {sku}", ln=1)
-    pdf.cell(0, 6, f"Reason: {reason}", ln=1)
-    pdf.ln(2)
+    # Top info
+    pdf.set_font("Arial", "B", 20)
+    pdf.cell(0, 14, "Order Issue Report", ln=1, align="C")
+    pdf.set_font("Arial", "", 12)
+    pdf.set_xy(20, 22)
+    pdf.multi_cell(0, 8, f"Brand: {brand}     Platform: {platform}\nOrder ID: {order_id}\nTracking: {tracking}     SKU: {sku}\nReason: {reason}")
 
-    # Image grid setup (2 columns x 2 rows)
-    img_width = 65  # mm
-    img_height = 50 # mm
-    margin_x = 20
-    margin_y = pdf.get_y() + 3
-    col_spacing = 90
-    row_spacing = 60
+    # Image grid setup
+    img_width = 90  # Wider for fuller page
+    img_height = 65
+    x_start = 25
+    y_start = 60
+    x_gap = img_width + 18
+    y_gap = img_height + 20
 
     photos = [
         (parcel_photo, "Received Parcel Condition"),
@@ -62,15 +60,14 @@ if st.button("Generate PDF"):
         if photo:
             img_path = save_temp_image(photo, i)
             temp_files.append(img_path)
-            # Position calculation (2x2 grid)
             col = i % 2
             row = i // 2
-            x = margin_x + col * col_spacing
-            y = margin_y + row * row_spacing
+            x = x_start + col * x_gap
+            y = y_start + row * y_gap
             pdf.image(img_path, x=x, y=y, w=img_width, h=img_height)
             pdf.set_xy(x, y + img_height + 2)
-            pdf.set_font("Arial", "I", 8)
-            pdf.cell(img_width, 5, caption, align="C")
+            pdf.set_font("Arial", "I", 11)
+            pdf.cell(img_width, 8, caption, align="C")
 
     # Export PDF file name according to order_id
     pdf_filename = f"{order_id if order_id else 'order_issue_report'}.pdf"
