@@ -1,10 +1,9 @@
 import streamlit as st
 from fpdf import FPDF
 from PIL import Image, ImageOps
-import io
 import os
 
-st.title("Order Issue PDF Generator (Single Landscape Page, Auto-Rotate Photos)")
+st.title("Order Issue PDF Generator (Single Landscape Page, Auto-Rotate Photos, V5, 1 Remark)")
 
 # Inputs
 brand = st.text_input("Brand")
@@ -13,11 +12,12 @@ order_id = st.text_input("Order ID")
 tracking = st.text_input("Tracking Number")
 sku = st.text_input("SKU")
 reason = st.selectbox("Reason", ["Damage", "Wrong Item"])
+remark = st.text_area("Remark")
 
 parcel_photo = st.file_uploader("Received Parcel Condition Photo", type=["jpg", "jpeg", "png"])
 awb_photo = st.file_uploader("AWB/Tracking Detail Photo", type=["jpg", "jpeg", "png"])
-product_photo_1 = st.file_uploader("Product Photo 1", type=["jpg", "jpeg", "png"])
-product_photo_2 = st.file_uploader("Product Photo 2", type=["jpg", "jpeg", "png"])
+product_photo_1 = st.file_uploader("Product Condition Photo 1", type=["jpg", "jpeg", "png"])
+product_photo_2 = st.file_uploader("Product Condition Photo 2", type=["jpg", "jpeg", "png"])
 
 def save_temp_image(uploaded_file, name, max_dim=500):
     if uploaded_file:
@@ -40,6 +40,7 @@ if st.button("Generate PDF"):
     pdf.cell(0, 6, f"Order ID: {order_id}", ln=1)
     pdf.cell(0, 6, f"Tracking: {tracking}   SKU: {sku}", ln=1)
     pdf.cell(0, 6, f"Reason: {reason}", ln=1)
+    pdf.cell(0, 6, f"Remark: {remark}", ln=1)
     pdf.ln(2)
 
     # Image grid setup (2 columns x 2 rows)
