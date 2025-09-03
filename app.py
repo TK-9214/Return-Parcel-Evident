@@ -3,7 +3,7 @@ from fpdf import FPDF
 from PIL import Image, ImageOps
 import os
 
-st.title("Order Issue PDF Generator (Highlight on Upload, Plain PDF)")
+st.title("Return Parcel Evident)")
 
 # Inputs
 brand = st.text_input("Brand")
